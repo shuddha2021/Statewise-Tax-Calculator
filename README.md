@@ -1,10 +1,14 @@
 # Tax Calculator
 
-The Tax Calculator is a web application that allows users to calculate their federal and state taxes based on their income and state of residence. This project uses modern web technologies to provide a user-friendly interface and accurate tax calculations.
+The Tax Calculator is a web application that allows users to calculate their federal and state taxes based on their income and state of residence. This project uses modern web technologies to provide a user-friendly interface and approximate tax calculations.
+
+## Disclaimer
+
+The Tax Calculator is for demonstration purposes only. The tax calculations are based on approximations and should not be used for actual tax filing. The results may not accurately reflect the exact federal or state tax liabilities. Always consult with a qualified tax professional for accurate tax advice and calculations.
 
 ## Key Features
 
-- **State Selection**: Select from all 50 U.S. states to get accurate state tax calculations.
+- **State Selection**: Select from all 50 U.S. states to get approximate state tax calculations.
 - **Federal Tax Brackets**: The app uses predefined federal tax brackets to calculate the federal tax for the given income.
 - **Dynamic Calculation**: Calculates taxes in real-time as the user enters their income and selects a state.
 - **Reset Functionality**: Users can reset the form to start a new calculation.
@@ -12,11 +16,9 @@ The Tax Calculator is a web application that allows users to calculate their fed
 - **Tooltips**: Informative tooltips guide users to understand the income field and other elements.
 - **Animations and Transitions**: Smooth animations for a better user experience.
 
+![Screenshot](https://github.com/shuddha2021/TaxCalculatorAllStates/assets/81951239/35f2b9fd-34c8-482f-ae2f-111dfe475013)
 
-<img width="1147" alt="Screenshot 2024-05-07 at 10 42 23 AM" src="https://github.com/shuddha2021/TaxCalculatorAllStates/assets/81951239/35f2b9fd-34c8-482f-ae2f-111dfe475013">
-
-<img width="1124" alt="Screenshot 2024-05-07 at 10 41 32 AM" src="https://github.com/shuddha2021/TaxCalculatorAllStates/assets/81951239/480c2521-14a3-42cc-9bb7-8731ae594f95">
-
+![Screenshot](https://github.com/shuddha2021/TaxCalculatorAllStates/assets/81951239/480c2521-14a3-42cc-9bb7-8731ae594f95)
 
 ## Core Logic
 
