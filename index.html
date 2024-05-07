@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm2KjqYXVCYEUO6NetAgqQyhxfqBokS3Zypm3/9gzUW0rQ1P4gti6/aFZjP3HBmPtd3ViPOJrAj0/rYf5VWQkSvfbCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        /* Base styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        /* Header styling */
+        h1 {
+            margin-top: 30px;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Input section styling */
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        select:hover, input:hover {
+            border-color: #999;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+        /* Button styling */
+        .button {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        /* Tooltip styling */
+        .tooltip {
+            position: relative;
+            cursor: pointer;
+            color: #4CAF50;
+            text-decoration: underline;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 5px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: visibility 0.3s, opacity 0.3s;
+            opacity: 0;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Result section styling */
+        .result-section {
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0; /* Start with hidden results */
+            transform: scale(0.9); /* Start with a smaller scale */
+        }
+
+        .result-section h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .result-section p {
+            margin: 5px 0;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .result-section p span:first-child {
+            font-weight: bold;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .button {
+                padding: 10px 16px;
+                font-size: 0.9em;
+                margin-bottom: 10px;
+            }
+
+            .result-section p {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+<h1>Tax Calculator</h1>
+<div class="container">
+    <div class="input-section">
+        <label for="state">Select State:</label>
+        <select id="state">
+            <option value="">-- Select State --</option>
+            <!-- Options for all 50 states will be added dynamically by JavaScript -->
+        </select>
+        <label for="income">Enter Annual Income:</label>
+        <input type="number" id="income" placeholder="Enter your annual income" autofocus>
+        <span class="tooltip">
+            <i class="fas fa-question-circle"></i>
+            <span class="tooltip-text">Enter your total annual income before any deductions.</span>
+        </span>
+    </div>
+    <button class="button" onclick="resetCalculator()">Reset</button>
+    <div class="result-section" id="results">
+        <h2>Calculation Results</h2>
+        <p><span>Federal Tax:</span> <span id="federal-tax">--</span></p>
+        <p><span>State Tax:</span> <span id="state-tax">--</span></p>
+        <p><span>Total Tax:</span> <span id="total-tax">--</span></p>
+        <p><span>After-Tax Income:</span> <span id="after-tax-income">--</span></p>
+    </div>
+</div>
+
+<script>
+    const stateSelect = document.getElementById('state');
+    const incomeInput = document.getElementById('income');
+    const federalTaxDisplay = document.getElementById('federal-tax');
+    const stateTaxDisplay = document.getElementById('state-tax');
+    const totalTaxDisplay = document.getElementById('total-tax');
+    const afterTaxIncomeDisplay = document.getElementById('after-tax-income');
+    const resultsSection = document.getElementById('results');
+
+    // Define the federal tax brackets and rates
+    const federalTaxBrackets = [
+        { taxRate: 0.10, maxIncome: 9950 },
+        { taxRate: 0.12, maxIncome: 40525 },
+        { taxRate: 0.22, maxIncome: 86375 },
+        { taxRate: 0.24, maxIncome: 164925 },
+        { taxRate: 0.32, maxIncome: 209425 },
+        { taxRate: 0.35, maxIncome: 523600 },
+        { taxRate: 0.37, maxIncome: Infinity }
+    ];
+
+    // Define the state tax rates for all 50 states
+    const stateTaxRates = {
+        "Alabama": 0.05,
+        "Alaska": 0,
+        "Arizona": 0.0459,
+        "Arkansas": 0.0693,
+        "California": 0.0913,
+        "Colorado": 0.0463,
+        "Connecticut": 0.0699,
+        "Delaware": 0.0665,
+        "Florida": 0,
+        "Georgia": 0.0575,
+        "Hawaii": 0.0811,
+        "Idaho": 0.0696,
+        "Illinois": 0.0675,
+        "Indiana": 0.0323,
+        "Iowa": 0.0892,
+        "Kansas": 0.0575,
+        "Kentucky": 0.06,
+        "Louisiana": 0.0625,
+        "Maine": 0.0715,
+        "Maryland": 0.0825,
+        "Massachusetts": 0.0501,
+        "Michigan": 0.0425,
+        "Minnesota": 0.0985,
+        "Mississippi": 0.05,
+        "Missouri": 0.0615,
+        "Montana": 0.069,
+        "Nebraska": 0.0684,
+        "Nevada": 0,
+        "New Hampshire": 0,
+        "New Jersey": 0.1075,
+        "New Mexico": 0.0491,
+        "New York": 0.0892,
+        "North Carolina": 0.0499,
+        "North Dakota": 0.0211,
+        "Ohio": 0.0397,
+        "Oklahoma": 0.05,
+        "Oregon": 0.0985,
+        "Pennsylvania": 0.0307,
+        "Rhode Island": 0.0599,
+        "South Carolina": 0.07,
+        "South Dakota": 0,
+        "Tennessee": 0.01,
+        "Texas": 0,
+        "Utah": 0.0495,
+        "Vermont": 0.0824,
+        "Virginia": 0.0575,
+        "Washington": 0,
+        "West Virginia": 0.065,
+        "Wisconsin": 0.0765,
+        "Wyoming": 0
+    };
+
+    // Add options for all 50 states to the select element
+    Object.keys(stateTaxRates).forEach(state => {
+        const option = document.createElement('option');
+        option.value = state;
+        option.text = state;
+        stateSelect.add(option);
+    });
+
+    // Event listeners for when the user changes the state or income
+    stateSelect.addEventListener('change', calculateTaxes);
+    incomeInput.addEventListener('input', calculateTaxes);
+
+    function calculateTaxes() {
+        const state = stateSelect.value;
+        const income = parseFloat(incomeInput.value);
+
+        if (state && income > 0) {
+            const federalTax = calculateFederalTax(income);
+            const stateTax = calculateStateTax(income, state);
+            const totalTax = federalTax + stateTax;
+            const afterTaxIncome = income - totalTax;
+
+            federalTaxDisplay.textContent = `$${federalTax.toFixed(2)}`;
+            stateTaxDisplay.textContent = `$${stateTax.toFixed(2)}`;
+            totalTaxDisplay.textContent = `$${totalTax.toFixed(2)}`;
+            afterTaxIncomeDisplay.textContent = `$${afterTaxIncome.toFixed(2)}`;
+            resultsSection.style.opacity = 1; // Make results visible
+            resultsSection.style.transform = 'scale(1)'; // Reset scale
+        } else {
+            resetResults();
+        }
+    }
+
+    function calculateFederalTax(income) {
+        let tax = 0;
+        let remainingIncome = income;
+
+        for (const bracket of federalTaxBrackets) {
+            if (remainingIncome <= bracket.maxIncome) {
+                tax += remainingIncome * bracket.taxRate;
+                break;
+            } else {
+                tax += bracket.maxIncome * bracket.taxRate;
+                remainingIncome -= bracket.maxIncome;
+            }
+        }
+
+        return tax;
+    }
+
+    function calculateStateTax(income, state) {
+        const stateRate = stateTaxRates[state];
+        return income * stateRate;
+    }
+
+    function resetCalculator() {
+        stateSelect.value = '';
+        incomeInput.value = '';
+        resetResults(); // Reset the results display
+    }
+
+    function resetResults() {
+        federalTaxDisplay.textContent = '--';
+        stateTaxDisplay.textContent = '--';
+        totalTaxDisplay.textContent = '--';
+        afterTaxIncomeDisplay.textContent = '--';
+        resultsSection.style.opacity = 0; // Hide the results
+        resultsSection.style.transform = 'scale(0.9)'; // Shrink the results
+    }
+
+    // Ensure income is always positive
+    incomeInput.addEventListener('input', function() {
+        if (this.value < 0) {
+            this.value = Math.abs(this.value);
+        }
+    });
+
+    // Animation and transition effects for smooth display
+    resultsSection.addEventListener('transitionend', function() {
+        if (this.style.opacity === '1') {
+            this.classList.add('animate__animated', 'animate__fadeIn');
+        } else {
+            this.classList.remove('animate__animated', 'animate__fadeIn');
+        }
+    });
+
+    // Implement copy to clipboard functionality for result sections
+    const resultSpans = document.querySelectorAll('.result-section p span:last-child');
+    resultSpans.forEach(span => {
+        span.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.textContent.replace('$', ''));
+            this.classList.add('copied');
+            setTimeout(() => this.classList.remove('copied'), 1000);
+        });
+    });
+</script>
+
+</body>
+</html>
